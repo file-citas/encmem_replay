@@ -1,0 +1,10 @@
+1) get system call sequences from the replay module (or use the trace.py script)
+2) create reference system call sequences for different distance measures
+   $> python process_trace_benchmark_dir.py <ouput dir prefix?> <systemcall sequence directory> [<list of offsets to use, empty == all offsets>]
+
+3) evaluate generated reference:
+   $> python eval_refs.py <test systemcall sequence directory> <pickle dump of reference sequence>
+
+EXAMPLE:
+python process_trace_benchmark_dir.py b_6.7_noaslr_newsc_pre_ssh_3 b_6.7_noaslr_newsc_pre_ssh_3_seqs b5 265 155 1b5 115
+python eval_refs.py b_6.7_noaslr_newsc_pre_ssh_3 b_6.7_noaslr_newsc_pre_ssh_1_seqs/refs.pkl

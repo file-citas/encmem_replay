@@ -1,0 +1,45 @@
+BUILD
+-----
+
+0) Patch qemu or somehow enable dirty page logging for the main memory of the virtual box
+
+1) Generate guest_syscalls.c
+   $> python util/get_guest_syscalls.py <path to disassembled(i.e. objdumped) vmlinux> source/guest_syscalls.c
+
+2) Update Makefile to set KERNELTREE to your kernel source directory
+
+3) Update source/mem_tracer.c: RAM_MEMSLOT_ID & RAM_MEMSLOT_AS_ID
+   These have to be the memory slot ids of the main memory of your virtual machine
+
+3) Build module:
+   $> make amd
+
+4) Build userland tools:
+   $> make ul
+   $> make set_check
+   $> make set_seq
+   $> make add_target
+
+
+RUN
+---
+
+0) Trace:
+   $> #start unencrypted guest ...
+   $> insmod kaper.ko                                 # insert replay module
+   $> ./ul 0 $(( \                                    # update kvm_amd module info
+      $(cat /sys/module/kvm_amd/sections/.rodata) \
+       -  0xffffffffa0000000 ))
+   $> ./ul 1 $(pidof qemu-system-x86_64)              # locate VM kernel structures
+   $> ./set_check <search string len> <search string> # set search string
+   $> ./ul 2 1                                        # enable memory tracing
+   $> ./ul 11 1                                       # enable system call tracing
+   $> # check dmesg, you should see log messages if the search string is found
+      # in guest memory, the traces for the identified guest frame numbers will
+      # be accessible then via debugfs
+
+   You can also check out sev_replay/benchmarks/trace.py, which somewhat automates the process
+
+2) Capture/Replay:
+   ...
+   check out sev_replay/benchmarks/capture_replay.py, which somewhat automates the process

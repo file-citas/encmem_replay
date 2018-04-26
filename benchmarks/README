@@ -1,0 +1,13 @@
+GENERATE TRACES
+---------------
+sudo python3 trace.py example.conf <benchmark_id> [1]       # 1 indicates *no* dry run
+
+
+PROCESS THE SEQUENCE DATA
+-------------------------
+check seqgen folder
+
+
+CAPTURE AND REPLAY
+------------------
+sudo python3 capture_replay.py example.conf <benchmark_id> [1]       # 1 indicates *no* dry run
